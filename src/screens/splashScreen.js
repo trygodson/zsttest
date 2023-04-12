@@ -3,17 +3,20 @@ import {useEffect} from "react";
 import {Image, SafeAreaView, Text, View} from "react-native";
 import {FocusAwareStatusBar} from "../components/common/FocusAwareStatusbar";
 import {useTheme} from "react-native-paper";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {getTaskAction} from "../store/slices/task/taskSlice";
+import {selectTaskAction} from "../store/slices/myMainTask/mainTaskSlice";
 
 const SplashScreen = () => {
   const {dispatch} = useNavigation();
   const storeDispatch = useDispatch();
+  const {mainList, selectedTask} = useSelector((state) => state.getMainTask);
+
   const {colors} = useTheme();
   const performTimeConsumingTask = async () => {
     return new Promise((resolve) =>
       setTimeout(async () => {
-        storeDispatch(getTaskAction());
+        storeDispatch(selectTaskAction(mainList[0]));
         dispatch(StackActions.replace("TaskScreen", {}));
         // const token = await GET_STORAGE_ITEM('token');
         // if (token === null) {

@@ -1,15 +1,16 @@
 import Modal from "react-native-modal";
-import {StyleSheet, View, Keyboard, TextInput} from "react-native";
+import {StyleSheet, View, Keyboard, TextInput, TouchableOpacity} from "react-native";
 import {useState} from "react";
 import {useTheme, Text, IconButton, Button, Chip} from "react-native-paper";
 import DatePicker from "react-native-date-picker";
 import moment from "moment";
 import firestore from "@react-native-firebase/firestore";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {getTaskAction} from "../store/slices/task/taskSlice";
 
 const AddTaskBottomSheet = ({modalVisible, setModalVisible}) => {
   const dispatch = useDispatch();
+  const {selectedTask} = useSelector((state) => state.getMainTask);
   const [details, setDetails] = useState();
   const [data, setData] = useState({
     title: null,
@@ -28,11 +29,15 @@ const AddTaskBottomSheet = ({modalVisible, setModalVisible}) => {
     } else {
       firestore()
         .collection("tasks")
-        .add(data)
+        .add({...data, selectedTask})
         .then(() => {
-          dispatch(getTaskAction());
+          dispatch(getTaskAction(selectedTask));
           setModalVisible(false);
-          console.log("Tasks added!");
+          setData({
+            title: null,
+            description: null,
+            date: null,
+          });
         });
     }
   };
@@ -109,9 +114,11 @@ const AddTaskBottomSheet = ({modalVisible, setModalVisible}) => {
               onPress={() => setOpenDate(true)}
             />
 
-            <Text variant="bodySmall" style={{color: "skyblue", marginRight: 8}} onPress={() => addTask()}>
-              Save
-            </Text>
+            <TouchableOpacity onPress={() => addTask()}>
+              <Text variant="bodySmall" style={{color: "skyblue", marginRight: 8}}>
+                Save
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>

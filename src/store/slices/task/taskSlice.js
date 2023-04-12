@@ -9,7 +9,7 @@ const initialState = {
   response: null,
 };
 const getTaskSlice = createSlice({
-  name: "profile",
+  name: "tasks",
   initialState,
   reducers: {
     getProfileDefaultState: () => initialState,
@@ -32,12 +32,14 @@ const getTaskSlice = createSlice({
     });
   },
 });
-export const getTaskAction = createAsyncThunk("getProfile", async (data, thunkApi) => {
+export const getTaskAction = createAsyncThunk("getTask", async (data, thunkApi) => {
   return firestore()
     .collection("tasks")
+    .where("selectedTask", "==", `${data}`)
     .get()
     .then((querySnapshot) => {
       const tasks = [];
+      // console.log(querySnapshot, "documentSnapshot.data()");
 
       querySnapshot.forEach((documentSnapshot) => {
         tasks.push({

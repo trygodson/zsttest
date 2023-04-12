@@ -12,6 +12,7 @@ import {getTaskAction} from "../store/slices/task/taskSlice";
 import TaskItems from "../components/taskItems";
 import Animated, {useAnimatedGestureHandler} from "react-native-reanimated";
 import {PanGestureHandler} from "react-native-gesture-handler";
+import ListEmptyComponent from "../components/listEmptyComponent";
 const TaskScreen = () => {
   const theme = useTheme();
   const flatlistRef = useRef();
@@ -50,6 +51,7 @@ const TaskScreen = () => {
               }}
               contentContainerStyle={{flexGrow: 1}}
               ListFooterComponentStyle={{flex: 1, justifyContent: "flex-end"}}
+              ListEmptyComponent={ListEmptyComponent}
               // ListFooterComponent={<BottomArea setModalVisible={setShowModal} />}
             />
           </PanGestureHandler>

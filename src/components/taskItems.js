@@ -2,10 +2,26 @@ import moment from "moment";
 import {useState} from "react";
 import {View} from "react-native";
 import {RadioButton, Text, useTheme} from "react-native-paper";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import firestore from "@react-native-firebase/firestore";
+import {useDispatch, useSelector} from "react-redux";
+import {getTaskAction} from "../store/slices/task/taskSlice";
 
 const TaskItems = ({item}) => {
   const theme = useTheme();
+  const dispatch = useDispatch();
   const [checked, setChecked] = useState(false);
+  const {selectedTask} = useSelector((state) => state.getMainTask);
+
+  const deleteTask = async (id) => {
+    firestore()
+      .collection("tasks")
+      .doc(id)
+      .delete()
+      .then(() => {
+        dispatch(getTaskAction(selectedTask));
+      });
+  };
   return (
     <View
       style={{
@@ -45,7 +61,9 @@ const TaskItems = ({item}) => {
           </View>
         </View>
       </View>
-      <View style={{width: "15%"}}></View>
+      <View style={{width: "15%", alignItems: "center"}}>
+        {checked && <AntDesign name="delete" size={18} color="red" onPress={() => deleteTask(item?.id)} />}
+      </View>
     </View>
   );
 };
