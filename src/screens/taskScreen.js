@@ -20,6 +20,16 @@ const TaskScreen = () => {
   const {height} = useWindowDimensions();
   const {response, loading} = useSelector((state) => state.getTask);
   const TAB_WIDTH = 80;
+  const gestureHandler = useAnimatedGestureHandler({
+    onStart() {
+      console.log("just started");
+    },
+
+    onActive(event) {
+      console.log(event.absoluteX);
+    },
+    onFinish() {},
+  });
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -27,20 +37,23 @@ const TaskScreen = () => {
         <StatusBar animated={true} backgroundColor="#101518" barStyle="white-content" />
         <Header />
         <TopArea />
-
-        <Animated.FlatList
-          // ListHeaderComponent={<TopArea />}
-          ref={flatlistRef}
-          data={response}
-          refreshControl={<RefreshControl refreshing={loading} onRefresh={() => dispatch(getTaskAction())} />}
-          keyExtractor={(item) => `${item?.id}`}
-          renderItem={({index, item}) => {
-            return <TaskItems item={item} />;
-          }}
-          contentContainerStyle={{flexGrow: 1}}
-          ListFooterComponentStyle={{flex: 1, justifyContent: "flex-end"}}
-          // ListFooterComponent={<BottomArea setModalVisible={setShowModal} />}
-        />
+        <Animated.View style={{flexGrow: 1}}>
+          <PanGestureHandler onGestureEvent={gestureHandler}>
+            <Animated.FlatList
+              // ListHeaderComponent={<TopArea />}
+              ref={flatlistRef}
+              data={response}
+              refreshControl={<RefreshControl refreshing={loading} onRefresh={() => dispatch(getTaskAction())} />}
+              keyExtractor={(item) => `${item?.id}`}
+              renderItem={({index, item}) => {
+                return <TaskItems item={item} />;
+              }}
+              contentContainerStyle={{flexGrow: 1}}
+              ListFooterComponentStyle={{flex: 1, justifyContent: "flex-end"}}
+              // ListFooterComponent={<BottomArea setModalVisible={setShowModal} />}
+            />
+          </PanGestureHandler>
+        </Animated.View>
         <BottomArea setModalVisible={setShowModal} />
       </View>
       <AddTaskBottomSheet modalVisible={showModal} setModalVisible={setShowModal} />
